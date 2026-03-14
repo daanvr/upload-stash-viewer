@@ -1,6 +1,7 @@
 // Upload Stash Viewer — File Detail View
 
 import { escapeHtml, formatFileSize, formatTimeRemaining, formatTimestamp, isCameraDefaultFilename } from '../utils.js';
+import { fetchStashThumbnailBlob } from '../api/commons.js';
 
 export function renderFileDetail(fileInfo) {
   const container = document.getElementById('file-detail');
@@ -23,9 +24,9 @@ export function renderFileDetail(fileInfo) {
     </div>
 
     <div class="detail-layout">
-      <div class="detail-image">
+      <div class="detail-image" id="detail-image-container" data-thumburl="${escapeHtml(fileInfo.url || fileInfo.thumburl || '')}">
         ${isImage && hasImage
-          ? `<img src="${escapeHtml(fileInfo.url || fileInfo.thumburl)}" alt="Stashed file preview" />`
+          ? `<div class="loading-state"><div class="spinner"></div><p>Loading image...</p></div>`
           : `<div class="detail-no-preview">
               <span class="file-type-large">${escapeHtml(fileInfo.mime || 'Unknown type')}</span>
               <p>No preview available</p>
@@ -149,6 +150,20 @@ function findMetaValue(metadata, name) {
   if (!metadata) return null;
   const entry = metadata.find(m => m.name === name);
   return entry ? String(entry.value) : null;
+}
+
+export async function loadDetailImage() {
+  const container = document.getElementById('detail-image-container');
+  if (!container) return;
+  const thumbUrl = container.dataset.thumburl;
+  if (!thumbUrl) return;
+
+  const blobUrl = await fetchStashThumbnailBlob(thumbUrl);
+  if (blobUrl) {
+    container.innerHTML = `<img src="${blobUrl}" alt="Stashed file preview" />`;
+  } else {
+    container.innerHTML = `<div class="detail-no-preview"><p>Could not load preview</p></div>`;
+  }
 }
 
 export function renderDetailLoading() {

@@ -1,6 +1,7 @@
 // Upload Stash Viewer — Stash Gallery View
 
 import { escapeHtml, formatFileSize, formatTimeRemaining } from '../utils.js';
+import { fetchStashThumbnailBlob } from '../api/commons.js';
 
 let expiryInterval = null;
 
@@ -15,20 +16,15 @@ export function renderStashGallery(files) {
   const cards = files.map(file => {
     const expiry = file.timestamp ? formatTimeRemaining(file.timestamp) : null;
     const ext = file.filekey?.split('.').pop()?.toUpperCase() || '?';
-    const isImage = file.type?.startsWith('image/');
-    const hasThumbnail = file.thumburl && isImage && file.type !== 'image/tiff';
 
     return `
       <div class="stash-card" data-action="view-file" data-filekey="${escapeHtml(file.filekey)}">
-        <div class="stash-card-thumb">
-          ${hasThumbnail
-            ? `<img src="${escapeHtml(file.thumburl)}" alt="" loading="lazy" />`
-            : `<div class="stash-card-icon">${escapeHtml(ext)}</div>`
-          }
+        <div class="stash-card-thumb" data-thumburl="${escapeHtml(file.thumburl || '')}">
+          <div class="stash-card-icon">${escapeHtml(ext)}</div>
           <span class="stash-card-type">${escapeHtml(ext)}</span>
         </div>
         <div class="stash-card-info">
-          <div class="stash-card-size">${formatFileSize(file.size)}</div>
+          <div class="stash-card-size">${formatFileSize(file.size)}${file.width ? ` &middot; ${file.width}&times;${file.height}` : ''}</div>
           ${expiry
             ? `<div class="stash-card-expiry ${expiry.className}" data-timestamp="${escapeHtml(file.timestamp)}">
                 ${expiry.expired ? 'Expired' : expiry.text + ' left'}
@@ -42,6 +38,29 @@ export function renderStashGallery(files) {
 
   container.innerHTML = `<div class="stash-grid">${cards}</div>`;
   startExpiryTimers();
+
+  // Load thumbnails asynchronously (they require authentication)
+  loadThumbnails();
+}
+
+async function loadThumbnails() {
+  const thumbContainers = document.querySelectorAll('.stash-card-thumb[data-thumburl]');
+  for (const container of thumbContainers) {
+    const thumbUrl = container.dataset.thumburl;
+    if (!thumbUrl) continue;
+
+    const blobUrl = await fetchStashThumbnailBlob(thumbUrl);
+    if (blobUrl) {
+      const img = document.createElement('img');
+      img.src = blobUrl;
+      img.alt = '';
+      img.loading = 'lazy';
+      // Remove the icon placeholder
+      const icon = container.querySelector('.stash-card-icon');
+      if (icon) icon.style.display = 'none';
+      container.insertBefore(img, container.firstChild);
+    }
+  }
 }
 
 function renderEmptyStash() {

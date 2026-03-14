@@ -22,7 +22,36 @@ export async function fetchStashedFiles() {
   });
 
   const data = await fetchWithAuth(`${COMMONS_API}?${params}`, token);
-  return data.query?.mystashedfiles || [];
+  const files = data.query?.mystashedfiles || [];
+
+  // Normalize: API returns mimetype, size, width, height, bits, mediatype
+  // Also fetch thumbnail info for each file
+  const enriched = await Promise.all(files.map(async (file) => {
+    try {
+      const info = await fetchStashFileInfo(file.filekey);
+      return {
+        filekey: file.filekey,
+        size: file.size,
+        type: file.mimetype || file.type || 'unknown',
+        width: file.width,
+        height: file.height,
+        timestamp: info.timestamp,
+        thumburl: info.thumburl,
+      };
+    } catch {
+      return {
+        filekey: file.filekey,
+        size: file.size,
+        type: file.mimetype || file.type || 'unknown',
+        width: file.width,
+        height: file.height,
+        timestamp: null,
+        thumburl: null,
+      };
+    }
+  }));
+
+  return enriched;
 }
 
 export async function fetchStashFileInfo(filekey) {
@@ -35,17 +64,16 @@ export async function fetchStashFileInfo(filekey) {
     action: 'query',
     prop: 'stashimageinfo',
     siifilekey: filekey,
-    siiprop: 'timestamp|url|metadata|commonmetadata|mime|sha1|size|dimensions|bitdepth|badfile',
+    siiprop: 'timestamp|url|metadata|commonmetadata|mime|sha1|size|dimensions|bitdepth',
     siiurlwidth: '800',
     format: 'json',
     formatversion: '2',
   });
 
   const data = await fetchWithAuth(`${COMMONS_API}?${params}`, token);
-  const pages = data.query?.pages;
-  if (!pages || pages.length === 0) throw new Error('No file info returned');
 
-  const info = pages[0].stashimageinfo?.[0];
+  // stashimageinfo response is at query.stashimageinfo[0], NOT query.pages[0]
+  const info = data.query?.stashimageinfo?.[0];
   if (!info) throw new Error('No stash image info for this filekey');
 
   return {
@@ -62,6 +90,27 @@ export async function fetchStashFileInfo(filekey) {
     metadata: info.metadata || [],
     commonmetadata: info.commonmetadata || [],
   };
+}
+
+// Fetch a stash thumbnail as a blob URL (needed because stash thumb URLs
+// go through Special:UploadStash and require authentication)
+export async function fetchStashThumbnailBlob(thumbUrl) {
+  if (!thumbUrl) return null;
+  if (DEMO_MODE) return thumbUrl; // mock URLs are public
+
+  const token = await getAccessToken();
+  if (!token) return null;
+
+  try {
+    const response = await fetch(thumbUrl, {
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+    if (!response.ok) return null;
+    const blob = await response.blob();
+    return URL.createObjectURL(blob);
+  } catch {
+    return null;
+  }
 }
 
 export async function fetchCSRFToken() {

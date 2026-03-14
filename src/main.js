@@ -5,7 +5,7 @@ import { DEMO_MODE } from './config.js';
 import { login, handleCallback, isAuthenticated, fetchUserProfile, logout } from './api/oauth.js';
 import { fetchStashedFiles, fetchStashFileInfo } from './api/commons.js';
 import { renderStashGallery, renderStashLoading, renderStashError, stopExpiryTimers } from './ui/stash-view.js';
-import { renderFileDetail, renderDetailLoading, renderDetailError } from './ui/file-detail.js';
+import { renderFileDetail, renderDetailLoading, renderDetailError, loadDetailImage } from './ui/file-detail.js';
 import { renderMetadataForm, initMetadataForm, getFormData, buildWikitext, addCategory, removeCategory } from './ui/metadata-form.js';
 import { renderToolSuggestions } from './ui/tool-suggest.js';
 import { renderPublishButton, renderPublishConfirmation, hidePublishModal, handlePublish } from './ui/publish-flow.js';
@@ -115,6 +115,9 @@ async function loadFileDetail(filekey) {
 
     // Initialize form interactivity
     initMetadataForm();
+
+    // Load the detail image with authentication (async, non-blocking)
+    loadDetailImage();
 
   } catch (err) {
     console.error('Failed to load file detail:', err);

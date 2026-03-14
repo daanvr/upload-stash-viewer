@@ -3,6 +3,7 @@
 import {
   CLIENT_ID,
   CLIENT_SECRET,
+  OWNER_ACCESS_TOKEN,
   OAUTH_AUTHORIZE_URL,
   OAUTH_TOKEN_URL,
   OAUTH_PROFILE_URL,
@@ -10,6 +11,10 @@ import {
   DEMO_MODE,
 } from '../config.js';
 import { getMockUserProfile } from './mock-data.js';
+
+// When an owner-only access token is configured, we use it directly
+// instead of going through the PKCE redirect flow.
+const hasOwnerToken = Boolean(OWNER_ACCESS_TOKEN);
 
 const STORAGE_PREFIX = 'usv_';
 const KEYS = {
@@ -72,7 +77,7 @@ function clearTokens() {
 // --- Public API ---
 
 export async function login() {
-  if (DEMO_MODE) return;
+  if (DEMO_MODE || hasOwnerToken) return;
 
   const codeVerifier = generateCodeVerifier();
   const codeChallenge = await generateCodeChallenge(codeVerifier);
@@ -183,6 +188,9 @@ export async function refreshAccessToken() {
 export async function getAccessToken() {
   if (DEMO_MODE) return null;
 
+  // Owner-only token takes priority
+  if (hasOwnerToken) return OWNER_ACCESS_TOKEN;
+
   const token = sessionStorage.getItem(KEYS.accessToken);
   const expires = sessionStorage.getItem(KEYS.tokenExpires);
 
@@ -196,6 +204,7 @@ export async function getAccessToken() {
 
 export function isAuthenticated() {
   if (DEMO_MODE) return false;
+  if (hasOwnerToken) return true;
   const token = sessionStorage.getItem(KEYS.accessToken);
   const expires = sessionStorage.getItem(KEYS.tokenExpires);
   return Boolean(token && expires && Date.now() < Number(expires));
