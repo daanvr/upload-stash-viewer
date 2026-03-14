@@ -4,18 +4,22 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Upload Stash Viewer</title>
-  <link rel="stylesheet" href="/src/style.css" />
 </head>
 <body>
+  <noscript>
+    <p>Upload Stash Viewer requires JavaScript to run.</p>
+  </noscript>
   <div id="app">
+    <div id="demo-banner" class="hidden"></div>
     <header>
       <h1>Upload Stash Viewer</h1>
       <div id="auth-area"></div>
     </header>
     <main>
       <div id="stash-gallery"></div>
-      <div id="file-detail"></div>
+      <div id="file-detail" class="hidden"></div>
     </main>
+    <div id="publish-modal" class="hidden"></div>
   </div>
   <script type="module" src="/src/main.js"></script>
 </body>

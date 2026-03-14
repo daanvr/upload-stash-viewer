@@ -1,5 +1,6 @@
 /* Upload Stash Viewer — Styles */
-/* TODO: Implementation pending */
+
+/* === Base === */
 
 *, *::before, *::after {
   box-sizing: border-box;
@@ -9,12 +10,908 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
   color: #202122;
   background: #f8f9fa;
+  line-height: 1.5;
 }
+
+a {
+  color: #3366cc;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* === Utilities === */
+
+.hidden {
+  display: none !important;
+}
+
+/* === Layout === */
 
 #app {
   max-width: 1200px;
   margin: 0 auto;
+  padding: 0 1rem;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 0;
+  border-bottom: 1px solid #c8ccd1;
+  margin-bottom: 1.5rem;
+}
+
+header h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #202122;
+}
+
+main {
+  min-height: 60vh;
+}
+
+/* === Demo Banner === */
+
+#demo-banner {
+  background: #fef6e7;
+  border: 1px solid #fc3;
+  border-radius: 4px;
+  margin: 1rem 0 0;
+}
+
+.demo-banner-content {
+  padding: 0.75rem 1rem;
+  font-size: 13px;
+  color: #705000;
+}
+
+.demo-banner-content code {
+  background: rgba(0, 0, 0, 0.06);
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+  font-size: 12px;
+}
+
+/* === Auth Area === */
+
+.auth-user {
+  font-size: 13px;
+  color: #54595d;
+  margin-right: 0.75rem;
+}
+
+.auth-demo {
+  display: inline-block;
+  background: #fc3;
+  color: #705000;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 0.25em 0.75em;
+  border-radius: 3px;
+}
+
+/* === Buttons === */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: 0.5em 1em;
+  border: 1px solid #a2a9b1;
+  border-radius: 4px;
+  background: #f8f9fa;
+  color: #202122;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.btn:hover {
+  background: #eaecf0;
+  border-color: #72777d;
+}
+
+.btn-sm {
+  padding: 0.25em 0.6em;
+  font-size: 12px;
+}
+
+.btn-primary {
+  background: #3366cc;
+  color: #fff;
+  border-color: #3366cc;
+}
+
+.btn-primary:hover {
+  background: #2a4b8d;
+  border-color: #2a4b8d;
+}
+
+.btn-login {
+  background: #3366cc;
+  color: #fff;
+  border-color: #3366cc;
+  font-weight: 500;
+}
+
+.btn-login:hover {
+  background: #2a4b8d;
+}
+
+.btn-login.btn-large {
+  font-size: 16px;
+  padding: 0.75em 2em;
+}
+
+.btn-logout {
+  font-size: 12px;
+  padding: 0.25em 0.6em;
+}
+
+.btn-back {
+  font-size: 13px;
+  color: #3366cc;
+  border: none;
+  background: none;
+  padding: 0.4em 0;
+  cursor: pointer;
+}
+
+.btn-back:hover {
+  text-decoration: underline;
+}
+
+.btn-publish {
+  background: #14866d;
+  color: #fff;
+  border-color: #14866d;
+  font-weight: 500;
+  font-size: 15px;
+  padding: 0.6em 1.5em;
+}
+
+.btn-publish:hover {
+  background: #0f6a56;
+}
+
+.btn-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-cancel {
+  background: #f8f9fa;
+}
+
+/* === Login Prompt === */
+
+.login-prompt {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.login-prompt h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.login-prompt p {
+  color: #54595d;
+  margin-bottom: 1.5rem;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* === Loading & Error States === */
+
+.loading-state,
+.error-state,
+.empty-state {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: #54595d;
+}
+
+.error-state h2,
+.empty-state h2 {
+  color: #202122;
+  margin-bottom: 0.5rem;
+}
+
+.error-state p,
+.empty-state p {
+  margin-bottom: 1rem;
+}
+
+.spinner {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  border: 3px solid #c8ccd1;
+  border-top-color: #3366cc;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* === Stash Gallery Grid === */
+
+.stash-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.stash-card {
+  background: #fff;
+  border: 1px solid #c8ccd1;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.stash-card:hover {
+  border-color: #3366cc;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.stash-card-thumb {
+  position: relative;
+  aspect-ratio: 1;
+  background: #eaecf0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.stash-card-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.stash-card-icon {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #72777d;
+  text-transform: uppercase;
+}
+
+.stash-card-type {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 0.15em 0.5em;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+
+.stash-card-info {
+  padding: 0.6rem 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.stash-card-size {
+  color: #54595d;
+}
+
+.stash-card-expiry {
+  font-weight: 600;
+  font-size: 11px;
+  padding: 0.15em 0.5em;
+  border-radius: 3px;
+}
+
+.expiry-ok {
+  background: #d5fdf4;
+  color: #14866d;
+}
+
+.expiry-warning {
+  background: #fef6e7;
+  color: #ac6600;
+}
+
+.expiry-critical {
+  background: #fee7e6;
+  color: #d33;
+}
+
+.expiry-expired {
+  background: #eaecf0;
+  color: #72777d;
+}
+
+/* === File Detail View === */
+
+.detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.detail-expiry {
+  font-weight: 600;
+  font-size: 13px;
+  padding: 0.25em 0.75em;
+  border-radius: 4px;
+}
+
+.detail-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.detail-image {
+  background: #eaecf0;
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+}
+
+.detail-image img {
+  max-width: 100%;
+  max-height: 70vh;
+  object-fit: contain;
+}
+
+.detail-no-preview {
+  text-align: center;
+  padding: 3rem;
+  color: #72777d;
+}
+
+.file-type-large {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.detail-meta {
+  overflow-y: auto;
+  max-height: 85vh;
+}
+
+.detail-meta h3 {
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid #eaecf0;
+}
+
+/* === Metadata Table === */
+
+.meta-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin-bottom: 1.5rem;
+}
+
+.meta-table th {
+  text-align: left;
+  font-weight: 600;
+  padding: 0.4rem 0.75rem 0.4rem 0;
+  color: #54595d;
+  white-space: nowrap;
+  width: 1%;
+}
+
+.meta-table td {
+  padding: 0.4rem 0;
+  word-break: break-all;
+}
+
+.meta-table code {
+  font-size: 11px;
+  background: #f0f0f0;
+  padding: 0.1em 0.3em;
+  border-radius: 2px;
+}
+
+/* === Metadata Status === */
+
+.metadata-status {
+  margin-bottom: 1.5rem;
+}
+
+.metadata-status h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.readiness-badge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 0.15em 0.6em;
+  border-radius: 10px;
+}
+
+.readiness-ok {
+  background: #d5fdf4;
+  color: #14866d;
+}
+
+.readiness-incomplete {
+  background: #fef6e7;
+  color: #ac6600;
+}
+
+.status-section {
+  margin-bottom: 0.75rem;
+}
+
+.status-section h4 {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.4rem;
+}
+
+.status-tier-legal { color: #d33; }
+.status-tier-community { color: #ac6600; }
+.status-tier-technical { color: #3366cc; }
+
+.status-check {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.3rem 0;
+  font-size: 13px;
+}
+
+.check-icon {
+  font-weight: 700;
+  width: 1.2em;
+  text-align: center;
+}
+
+.check-ok .check-icon { color: #14866d; }
+.check-hint .check-icon { color: #ac6600; }
+.check-missing .check-icon { color: #d33; }
+
+.check-value {
+  color: #72777d;
+  font-size: 12px;
+  margin-left: auto;
+}
+
+/* === EXIF Details === */
+
+.exif-details {
+  margin-bottom: 1.5rem;
+}
+
+.exif-details summary {
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 13px;
+  color: #3366cc;
+  padding: 0.5rem 0;
+}
+
+.exif-details summary:hover {
+  text-decoration: underline;
+}
+
+/* === Tool Suggestions === */
+
+.tool-suggestions {
+  margin-bottom: 1.5rem;
+}
+
+.tool-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.tool-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: #fff;
+  border: 1px solid #c8ccd1;
+  border-radius: 6px;
+  text-decoration: none;
+  color: #202122;
+  transition: border-color 0.15s;
+}
+
+.tool-card:hover {
+  border-color: #3366cc;
+  text-decoration: none;
+}
+
+.tool-highlight {
+  border-color: #14866d;
+  background: #f6fff9;
+}
+
+.tool-icon {
+  flex-shrink: 0;
+  color: #54595d;
+}
+
+.tool-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.tool-name {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.tool-reason {
+  font-size: 12px;
+  color: #72777d;
+}
+
+.tool-external {
+  color: #72777d;
+  font-size: 16px;
+}
+
+/* === Metadata Form === */
+
+.metadata-form {
+  margin-bottom: 1.5rem;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 0.3rem;
+  color: #202122;
+}
+
+.form-group input[type="text"],
+.form-group input[type="date"],
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 0.5em 0.6em;
+  border: 1px solid #a2a9b1;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: inherit;
+  background: #fff;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: #3366cc;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(51, 102, 204, 0.15);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.filename-input {
+  display: flex;
+  align-items: center;
+}
+
+.filename-input input {
+  flex: 1;
+  border-radius: 4px 0 0 4px;
+}
+
+.filename-ext {
+  padding: 0.5em 0.6em;
+  background: #eaecf0;
+  border: 1px solid #a2a9b1;
+  border-left: none;
+  border-radius: 0 4px 4px 0;
+  font-size: 14px;
+  color: #54595d;
+}
+
+/* License picker */
+
+.license-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.license-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.4em 0.6em;
+  border: 1px solid #eaecf0;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.license-option:hover {
+  background: #f8f9fa;
+}
+
+.license-option input[type="radio"] {
+  margin: 0;
+}
+
+.license-label {
+  font-weight: 600;
+}
+
+.license-desc {
+  color: #72777d;
+  font-size: 12px;
+}
+
+/* Category search */
+
+.category-search-wrap {
+  position: relative;
+}
+
+.category-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #a2a9b1;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 10;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.category-result {
+  padding: 0.5em 0.75em;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.category-result:hover {
+  background: #eaf3ff;
+}
+
+.selected-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+
+.category-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  background: #eaf3ff;
+  color: #3366cc;
+  padding: 0.25em 0.5em;
+  border-radius: 3px;
+  font-size: 12px;
+}
+
+.category-chip button {
+  border: none;
+  background: none;
+  color: #3366cc;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0;
+  line-height: 1;
+}
+
+.category-chip button:hover {
+  color: #d33;
+}
+
+/* Wikitext preview */
+
+.wikitext-preview {
+  background: #1e1e2e;
+  color: #cdd6f4;
   padding: 1rem;
+  border-radius: 6px;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 12px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+/* === Publish Section === */
+
+.publish-section {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #eaecf0;
+}
+
+.publish-hint {
+  font-size: 12px;
+  color: #72777d;
+  margin-top: 0.5rem;
+}
+
+/* === Publish Modal === */
+
+#publish-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  position: relative;
+  background: #fff;
+  border-radius: 8px;
+  padding: 2rem;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.modal-content h3 {
+  margin-bottom: 1rem;
+}
+
+.confirm-details {
+  margin-bottom: 1.5rem;
+}
+
+.confirm-field {
+  margin-bottom: 0.75rem;
+}
+
+.confirm-field strong {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 0.3rem;
+}
+
+.confirm-wikitext {
+  background: #f8f9fa;
+  padding: 0.75rem;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 12px;
+  max-height: 200px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+/* Publish result */
+
+.publish-success {
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.publish-success h3 {
+  color: #14866d;
+}
+
+.publish-success a {
+  display: inline-block;
+  margin: 1rem 0;
+  font-size: 16px;
+}
+
+.publish-error {
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.publish-error h3 {
+  color: #d33;
+}
+
+.publish-error p {
+  margin: 0.75rem 0 1.5rem;
+  color: #54595d;
+}
+
+/* === Responsive === */
+
+@media (max-width: 768px) {
+  .stash-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+
+  .detail-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-image {
+    min-height: 200px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  header {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .stash-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+
+  .stash-card-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.2rem;
+  }
+
+  header h1 {
+    font-size: 1.2rem;
+  }
 }
