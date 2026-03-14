@@ -1,0 +1,15 @@
+{
+  "name": "upload-stash-viewer",
+  "private": true,
+  "version": "0.1.0",
+  "description": "View and manage your Wikimedia Commons upload stash — browse stashed files, enrich metadata, and publish to Commons",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "vite": "^6.2.0"
+  }
+}
